@@ -52,6 +52,22 @@ API 키가 없거나 AI 호출이 실패해도 일기는 저장되고, 상세 �
 
 라이브러리 없이 인가 코드 + PKCE 흐름으로 직접 구현했습니다 (`src/lib/google.ts`). ID 토큰은 Google 공개 키로 서명·`aud`·`iss`·`nonce`를 검증하고, 확인된 이메일(`email_verified`)만 받습니다. 같은 이메일로 이미 가입한 계정이 있으면 그 계정에 Google을 연결합니다.
 
+## 배포 (Vercel)
+
+GitHub 저장소가 Vercel 프로젝트와 연결돼 있어서 `main`에 push하면 자동으로 운영 배포된다. 함수 지역은 Supabase와 가까운 시드니(`syd1`, `vercel.json`)다.
+
+Vercel 환경 변수 (Production):
+
+| 이름 | 값 |
+| --- | --- |
+| `DATABASE_URL`, `DIRECT_URL` | 로컬 `.env`와 같은 Supabase 주소 |
+| `DATABASE_SSL_CA` | `certs/supabase-ca.crt`의 PEM 내용 전체 (파일 경로가 아님) |
+| `DATABASE_POOL_MAX` | `1` (서버리스) |
+| `SESSION_SECRET` | 로컬과 다른 운영용 랜덤 값 |
+| `ANTHROPIC_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | 쓸 때만. Google은 리디렉션 URI에 `https://<배포 주소>/api/auth/google/callback`도 추가 |
+
+환경 변수를 바꾼 뒤에는 다시 배포해야 반영된다 (`npx vercel redeploy <배포 주소>` 또는 대시보드의 Redeploy).
+
 ## 스크립트
 
 | 명령 | 설명 |
