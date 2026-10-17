@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/lint-edited.mjs\"",
+            "timeout": 60,
+            "statusMessage": "ESLint 검사 중..."
+          }
+        ]
+      }
+    ]
+  }
+}

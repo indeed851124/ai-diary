@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String? // 구글로만 가입한 사용자는 비밀번호가 없다
+  googleId     String?  @unique // Google ID 토큰의 sub
+  createdAt    DateTime @default(now())
+  diaries      Diary[]
+}
+
+model Diary {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime  @default(now())
+  analysis  Analysis?
+
+  @@index([userId, createdAt])
+}
+
+model Analysis {
+  id             String   @id @default(cuid())
+  diaryId        String   @unique
+  diary          Diary    @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  primaryEmotion String
+  emotions       Json
+  summary        String
+  comfortMessage String
+  encouragement  String
+  createdAt      DateTime @default(now())
+}
