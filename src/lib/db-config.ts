@@ -53,5 +53,7 @@ function readCa(value: string | undefined) {
   const trimmed = value.trim();
   // 환경 변수 한 줄에 넣느라 \n으로 이스케이프한 경우도 받는다.
   if (trimmed.startsWith("-----BEGIN")) return trimmed.replace(/\\n/g, "\n");
-  return fs.readFileSync(path.resolve(process.cwd(), trimmed), "utf8");
+  // 경로는 실행 시점에 정해지므로 번들러가 추적하지 않게 한다 (프로젝트 전체가 서버 번들에 들어가는 것 방지).
+  // 배포 환경에서는 파일 대신 PEM 내용을 넣는다.
+  return fs.readFileSync(path.resolve(/*turbopackIgnore: true*/ process.cwd(), trimmed), "utf8");
 }
